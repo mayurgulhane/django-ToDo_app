@@ -1,0 +1,142 @@
+{% extends "base.html" %} 
+{% block content %}
+
+<div ">
+  {% include "includes/message.html" %}
+
+  <h1 class="text-center p-3">Welcome to ToDo App</h1>
+  <div class="container d-flex align-items-center justify-content-center mt-3">
+    <!-- Add Button trigger modal -->
+    <button type="button" class="btn btn-primary rounded-5" data-bs-toggle="modal" data-bs-target="#exampleModal">
+      <i class="fa-solid fa-plus"></i> Add Task
+    </button>
+  </div>
+
+  <!--Start inCompleted Tasks -->
+  <div class="container p-5">
+    <div class="card shadow-lg bg-body-tertiary rounded">
+      <div class="card-header"></div>
+      <div class="text-center bg-danger text-white">
+        <h5>Incompleted Tasks</h5>
+      </div>
+      <div class="card-body">
+        {% if inCompletedTasks %}
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+          {% for inCompletedTask in inCompletedTasks %}
+          <div class="col">
+            
+            <div class="card border-primary shadow bg-body-tertiary rounded ">
+              <div class="card-body ">
+                <h5>{{inCompletedTask.task}}</h5>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                  <a href="{% url 'completed' inCompletedTask.id %}" class="btn btn-success" type="button"><i
+                      class="fa-solid fa-check"></i></a>
+
+                  <a type="button" class="btn btn-warning" data-bs-toggle="modal"
+                    data-bs-target="#exampleModal{{forloop.counter}}">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </a>
+
+                  <a href=" {% url 'deleteTask' inCompletedTask.id %}" class="btn btn-danger" type="button"><i
+                      class="fa-sharp fa-solid fa-trash"></i></a>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-center">Task is not availabel</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <!--End InCompleted Tasks -->
+
+  <!--Start Completed Tasks -->
+  <div class="container p-5">
+    <div class="card shadow-lg bg-body-tertiary rounded ">
+      <div class="card-header bg-sucess"></div>
+      <div class="text-center  bg-success text-white">
+        <h5>Completed Tasks</h5>
+      </div>
+      <div class="card-body">
+        {% if completedTasks %}
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+          {% for completedTask in completedTasks %}
+          <div class="col">
+            <div class="card border-success shadow bg-body-tertiary rounded">
+              <div class="card-body">
+                <h5>{{completedTask.task}}</h5>
+
+                <div class="d-grid d-md-flex justify-content-md-end">
+                  <a href=" {% url 'deleteTask' completedTask.id %}" class="btn btn-danger" type="button"><i
+                      class="fa-sharp fa-solid fa-trash"></i></a>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %} {% else %}
+          <p class="text-center">Task is not availabel</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--End Completed Tasks -->
+
+  <!--Start Create Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Task</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form action="{% url 'creatTask'  %}" method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="exampleInputEmail1" class="form-label">Enter Your Task</label>
+              <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                name="task" />
+            </div>
+            <button type="submit" class="btn btn-primary">Add</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End Create Modal -->
+
+  <!--Start Update Modal -->
+  {% for inCompletedTask in inCompletedTasks %}
+  <div class="modal fade" id="exampleModal{{forloop.counter}}" tabindex="-1"
+    aria-labelledby="exampleModalLabel{{forloop.counter}}" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Update ToDo</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form action="{% url 'updateTask' inCompletedTask.id %}" method="POST">
+            {% csrf_token %}
+
+            <div class="mb-3">
+              <label for="exampleInputEmail1" class="form-label">Enter Your Task</label>
+              <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                name="updateTask" value="{{inCompletedTask.task}}" />
+            </div>
+            <button type="submit" class="btn btn-primary">Update</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+  <!-- End Update Modal -->
+
+  {% endblock content %}
+</div>
